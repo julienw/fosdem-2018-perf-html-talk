@@ -1,0 +1,44 @@
+@font-face {
+  font-family: 'Fira Sans';
+  src: url(fonts/FiraSans-Regular.woff2);
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: url(fonts/FiraSans-Bold.woff2);
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  src: url(fonts/FiraMono-Regular.woff2);
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  src: url(fonts/FiraMono-Bold.woff2);
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url(fonts/FiraCode-Regular.woff2);
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Fira Code';
+  src: url(fonts/FiraCode-Bold.woff2);
+  font-style: normal;
+  font-weight: 700;
+}
+
+body { font-family: 'Fira Sans', sans-serif; }
+.remark-code, .remark-inline-code { font-family: 'Fira Code', monospace; }
