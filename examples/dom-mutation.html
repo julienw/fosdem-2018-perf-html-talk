@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>perf.html example &mdash; DOM Mutation</title>
+    <style>
+#container {
+  margin: 1em 0;
+  padding: 1em;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+    </style>
+  </head>
+  <body>
+    <h1>perf.html example &mdash; DOM Mutation</h1>
+    <p>
+      This demo creates 100 divs, and then randomly mutates the contents of some divs
+      with random letters.
+    </p>
+    <p><a href='https://github.com/gregtatum/talk-perf'>Original demo by Greg Tatum</a></p>
+    <p>
+      <label for='number'>Times to mutate:</label>
+      <input id='number' type='number' value='50000' />
+    </p>
+    <p>
+      <button id="button">Mutate DOM nodes</button>
+    </p>
+
+    <div id='container'>
+      <script>
+      for (let i = 0; i < 100; i++) {
+        document.write('<div>div</div>');
+      }
+      </script>
+    </div>
+
+    <script>
+      const container = document.querySelector('#container');
+      const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+      document.querySelector('#button').addEventListener('click', () => mutateDOM());
+
+      function mutateDOM() {
+        const times = +document.querySelector('#number').value;
+        for (let i = 0; i < times; i++) {
+          const div = container.children[
+            Math.floor(container.children.length * Math.random())
+          ];
+          div.innerHTML = generateLetters();
+          const rect = div.getBoundingClientRect();
+        }
+      }
+
+      function generateLetters() {
+        const length = Math.random() * 100;
+        let letters = "";
+        for (let i = 0; i < length; i++) {
+          letters += alphabet[Math.floor(alphabet.length * Math.random())];
+        }
+        return letters;
+      }
+    </script>
+  </body>
+</html>

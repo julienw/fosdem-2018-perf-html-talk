@@ -6,6 +6,8 @@
   </head>
   <body>
     <h1>Do Work</h1>
+    <p><a href='https://github.com/gregtatum/talk-perf'>Original demo by Greg Tatum</a></p>
+    <p><button>Do some work !</button></p>
     <script type="text/javascript">
       function a() {
         b();
@@ -23,7 +25,7 @@
         for (let i = 0; i < 1e7; i += Math.random()) {}
       }
 
-      a();
+      document.querySelector('button').addEventListener('click', a);
     </script>
   </body>
 </html>
