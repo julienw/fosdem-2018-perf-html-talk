@@ -15,27 +15,295 @@ class: center, middle, cover
 
 ---
 
-# Agenda
+# Me
 
-1. Introduction
-2. Deep-dive
-3. ...
+.float-left[
+![Julien](images/me.jpg)
+]
+
+.float-left[
+* [Julien Wajsberg](https://twitter.com/jwajsberg)
+* from Paris
+* at Mozilla for 5 years
+* developer on [perf.html](https://github.com/devtools-html/perf.html/) for 1
+year
+]
+---
+
+# What's the plan?
+
+1. A sampling profiler
+2. Call trees
+3. The timeline
+4. Markers
+5. Analyzing a profile
 
 ---
 
-# Introduction
+# A _sampling_ profiler
+
+* every millisecond we stop Firefox and look at the stack on every thread
+* when we capture we gather all these measurements in one profile
+* then we _merge_ the stacks into a _call tree_
+
+---
+
+# An example, maybe?
 
 ```javascript
-var plop = () => {
-  var a = 1;
+function a() {
+  b();
 }
+
+function b() {
+  c();
+}
+
+function c() {
+  doWork();
+}
+
+function doWork() {
+  for (let i = 0; i < 1e7; i += Math.random()) {}
+}
+
+a();
 ```
+
+---
+
+# Taking a sample every 1ms:
+
+```
+ 1ms      2ms      3ms      4ms      5ms      6ms
+-----    -----    -----    -----    -----    -----
+  a        a        a        a        a        a
+  ↓        ↓        ↓        ↓        ↓        ↓
+  b        b        b        b        b        b
+  ↓        ↓        ↓        ↓        ↓        ↓
+  c        c        c        c        c        c
+  ↓        ↓        ↓        ↓        ↓        ↓
+doWork   doWork   doWork   doWork   doWork   doWork
+```
+
+---
+
+# A simple call tree
+
+```
+  a       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  b       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  c       (Running time: 6ms) (Self time: 0ms)
+  ↓
+doWork    (Running time: 6ms) (Self time: 6ms)
+```
+
+---
+# In the profiler
+
+![A simple call tree](images/a-simple-call-tree.png)
+
+.center[[Build a simple call tree, for real](examples/a-simple-call-tree.html)]
+
+---
+# Another example
+
+```javascript
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  for (let i = 0; i < 1e7; i += Math.random()) {
+    doNothing();
+  }
+}
+
+function doNothing() {
+}
+
+a();
+```
+
+---
+# A simpler call tree !
+
+```
+  a       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  b       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  c       (Running time: 6ms) (Self time: 6ms)
+```
+
+???
+We spend too less time in doNothing, so it never shows up when we stop Firefox
+to get a sample. We might get one by chance sometimes.
+---
+# Slightly different
+
+.smaller[
+```javascript
+
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {
+  for (let i = 0; i < 1e7; i += Math.random()) {
+    doWork();
+  }
+}
+
+function doWork() {
+  for (let i = 0; i < 100; i += Math.random()) {
+  }
+}
+
+a();
+```
+]
+
+---
+# Same call tree as the first example
+
+```
+  a       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  b       (Running time: 6ms) (Self time: 0ms)
+  ↓
+  c       (Running time: 6ms) (Self time: 0ms)
+  ↓
+doWork    (Running time: 6ms) (Self time: 6ms)
+```
+???
+This time we spend enough time in doWork. What's important to see is that even
+if we call doWork several times we see it only once in the call tree.
+
+---
+# A more complex code
+
+.smallest[
+```javascript
+function a() { b(); }
+
+function b() {
+  c();
+  h();
+}
+
+function c() {
+  d();
+  f();
+}
+
+function d() { e(); }
+
+function e() {
+  for (let i = 0; i < 1e7; i += Math.random()) {}
+}
+
+function f() {
+* for (let i = 0; i < 1e7; i += Math.random()) {}
+  g();
+}
+
+function g() {
+  for (let i = 0; i < 1e7; i += Math.random()) {}
+}
+
+function h() { f(); }
+
+a();
+```
+]
+
+---
+# More samples!
+
+.center[
+![Samples for this example](images/branched-samples.png)
+]
+
+???
+Every ms we get a new stack.
+---
+# A call tree with branches!
+.center[
+![A call tree with branches](images/branched-call-tree.png)
+
+[Do it yourself!](examples/a-branched-call-tree.html)
+]
+
+???
+We merge the functions into a call tree with branches.
+
+---
+# In perf.html
+
+.center[
+![Screenshot of perf.html for this profile](images/branched-call-tree-in-perf.png)
+]
+
+???
+See especially the running times: we clearly see we spend time in `f`.
+
+---
+# Call tree inversion
+
+.center[
+![Screenshot of perf.html after inverting the profile](images/branched-call-tree-in-perf-inverted.png)
+]
+
+???
+Inverting the call tree makes it easier to see the functions where we spend the
+most time.
+
+---
+# The timeline
+
+.center[
+![Timeline in a profile](images/timeline.png)
+]
+
+* This actually shows the stack.
+* Changes in the height mean _changes in the stack_.
+* This is _not_ the CPU usage.
+
+---
+# Markers
+
+* Because we control Gecko's source code, we can _instrument_ it at all the
+right places
+* Just like developers can _instrument_ their own code with `performance.mark`.
+
+.center[
+![React markers](images/markers.png)
+]
+
+---
+# Markers and call trees
+
+* markers are supplementary to the call tree
+* we'll always get all markers
+* markers for important events: reflows, garbage collection, DOMEvent
+* we generate special markers for when the event loop is stuck
 
     </textarea>
     <script src="./lib/remark.js">
     </script>
     <script>
-      var slideshow = remark.create();
+var slideshow = remark.create({ highlightLines: true });
     </script>
   </body>
 </html>

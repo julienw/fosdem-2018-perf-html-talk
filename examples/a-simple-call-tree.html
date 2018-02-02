@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Do Work</title>
+  </head>
+  <body>
+    <h1>Do Work</h1>
+    <script type="text/javascript">
+      function a() {
+        b();
+      }
+
+      function b() {
+        c();
+      }
+
+      function c() {
+        doWork();
+      }
+
+      function doWork() {
+        for (let i = 0; i < 1e7; i += Math.random()) {}
+      }
+
+      a();
+    </script>
+  </body>
+</html>

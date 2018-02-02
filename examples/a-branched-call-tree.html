@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Do Work Branched</title>
+  </head>
+  <body>
+    <h1>Do Work Branched</h1>
+    <script type="text/javascript">
+      function a() {
+        b();
+      }
+
+      function b() {
+        c();
+        h();
+      }
+
+      function c() {
+        d();
+        f();
+      }
+
+      function d() {
+        e();
+      }
+
+      function e() {
+        for (let i = 0; i < 1e7; i += Math.random()) {}
+      }
+
+      function f() {
+        for (let i = 0; i < 1e7; i += Math.random()) {}
+        g();
+      }
+
+      function g() {
+        for (let i = 0; i < 1e7; i += Math.random()) {}
+      }
+
+      function h() {
+        f();
+      }
+
+      a();
+    </script>
+  </body>
+</html>
