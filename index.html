@@ -17,12 +17,10 @@ class: center, middle, cover
 
 # Me
 
-.float-left[
+.flex[
 ![Julien](images/me.jpg)
-]
 
-.float-left[
-* [Julien Wajsberg](https://twitter.com/jwajsberg)
+* Julien Wajsberg [@jwajsberg](https://twitter.com/jwajsberg)
 * from Paris
 * at Mozilla for 5 years
 * developer on [perf.html](https://github.com/devtools-html/perf.html/) for 1
@@ -103,9 +101,13 @@ doWork    (Running time: 6ms) (Self time: 6ms)
 ---
 # In the profiler
 
+.center[
+.with-caption[
 ![A simple call tree](images/a-simple-call-tree.png)
+]
 
-.center[[Build a simple call tree, for real](examples/a-simple-call-tree.html)]
+[Build a simple call tree, for real](examples/a-simple-call-tree.html)
+]
 
 ---
 # Another example
@@ -240,7 +242,9 @@ Every ms we get a new stack.
 ---
 # A call tree with branches!
 .center[
+.with-caption[
 ![A call tree with branches](images/branched-call-tree.png)
+]
 
 [Do it yourself!](examples/a-branched-call-tree.html)
 ]
@@ -287,9 +291,7 @@ most time.
 right places
 * Just like developers can _instrument_ their own code with `performance.mark`.
 
-.center[
-![React markers](images/markers.png)
-]
+.center[![React markers](images/markers.png)]
 
 ---
 # Markers and call trees
